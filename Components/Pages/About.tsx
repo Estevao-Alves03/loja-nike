@@ -1,8 +1,8 @@
 function About() {
     return(
-       <div className="flex justify-between">
+       <div className="flex justify-between h-screen">
             <div className="p-12 pr-0">
-                <h1 className="text-3xl font-black pb-2">About us</h1>
+                <h1 className="text-3xl font-black pb-5">About us</h1>
                 <p className="w-full pb-2">
                     Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
                     Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
@@ -22,7 +22,9 @@ function About() {
                     with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
                 </p>
             </div>
-         <div className="bg-fundo h-96 w-full bg-cover bg-center border-4 border-black m-4 p-16"></div>
+         <div className="h-96 w-full bg-cover bg-center border-4 border-black m-4 p-16"
+         style={{backgroundImage: (`url("/img/fundo.jpg")`)}}
+         ></div>
        </div>
 
      

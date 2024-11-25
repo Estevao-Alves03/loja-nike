@@ -1,11 +1,12 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Label } from "@radix-ui/react-label"
 import { Input } from "@/components/ui/input"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from 'react-hook-form'
 import { useNavigate } from "react-router-dom"
 import {z} from 'zod'
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod"
+
 
 const schema = z.object({
     name: z.string().min(1, 'este campo é obrigatorio'),
@@ -21,7 +22,7 @@ function Register() {
         password: string;
     }
 
-    const {register, handleSubmit, formState: { errors }} = useForm<FormData>({
+    const {register, handleSubmit, reset, formState: { errors }} = useForm<FormData>({
         resolver: zodResolver(schema)
     })
 
@@ -41,6 +42,7 @@ function Register() {
 
             const result = await response.json()
             console.log(result)
+            reset()
         }catch (error) {
             console.log('Erro', error)
         }
@@ -49,7 +51,7 @@ function Register() {
     const navigate = useNavigate()
 
     const handleClick = () => {
-        navigate('./Login')
+        navigate('/Login')
     }
 
     return(
@@ -57,10 +59,10 @@ function Register() {
             <div className="w-2/4 border-4 border-gray-900 rounded-lg">
                 <Card>
                   <CardHeader className="text-center">
-                    <CardTitle className="text-3xl font-extrabold bg-gray-200 p-2 rounded border border-gray-300 m-2">Cadastre-se</CardTitle>
+                    <CardTitle className="text-3xl font-extrabold bg-gray-200 p-2 rounded border-2 border-gray-400 m-2">Cadastre-se</CardTitle>
                     <CardDescription className="font-medium">faça seu cadastro!</CardDescription>
                     <div className='flex items-center justify-center'>
-                        <hr className='w-96' />
+                        <hr className='w-4/5' />
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -74,7 +76,7 @@ function Register() {
                                 type="string"
                                 placeholder={errors.name ? 'este campo é obrigatorio' : 'digite seu nome:'}
                                 {...register('name',{required: 'este campo é obrigatorio'})}
-                                className={`bg-white text-black w-10/12 ${errors.name ? 'border-red-500' : ''}`}
+                                className={`bg-white text-black w-10/12 cursor-text ${errors.name ? 'border-red-500' : ''}`}
                                 />
                                 {errors.name && <span className="text-blaxk text-sm mt-1">{errors.name.message}</span>}
                         </div>
@@ -88,7 +90,7 @@ function Register() {
                                 type="string"
                                 placeholder={errors.email ? 'este campo é obrigatorio' : 'digite seu email:'}
                                 {...register('email',{required: 'este campo é obrigatorio'})}
-                                className={`bg-white text-black w-10/12 ${errors.email ? 'border-red-500' : ''}`}
+                                className={`bg-white text-black w-10/12 cursor-text ${errors.email ? 'border-red-500' : ''}`}
                                 />
                                 {errors.email && <span className="text-blaxk text-sm mt-1">{errors.email.message}</span>}
                         </div>
@@ -102,7 +104,7 @@ function Register() {
                                 type="password"
                                 placeholder={errors.password ? 'este campo é obrigatorio' : 'digite sua senha:'}
                                 {...register('password',{required: 'este campo é obrigatorio', minLength: {value: 6, message: 'a senha deve ter no minimo 6 caracteres'}})}
-                                className={`bg-white text-black w-10/12 ${errors.password ? 'border-red-500' : ''}`}
+                                className={`bg-white text-black w-10/12 cursor-text ${errors.password ? 'border-red-500' : ''}`}
                                 />
                                 {errors.password && <span className="text-blaxk text-sm mt-1">{errors.password.message}</span>}
                         </div>
