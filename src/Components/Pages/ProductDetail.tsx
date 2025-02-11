@@ -73,7 +73,7 @@ function ProductDetail() {
       
 
     if (!product) {
-        return <div>DEU PAU NOJENTO</div>;
+        return <div>Falhou</div>;
     }
 
     

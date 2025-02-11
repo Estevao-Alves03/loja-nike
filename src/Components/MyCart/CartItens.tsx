@@ -1,5 +1,5 @@
 import { useCartStore } from "../../Zustand/CartStore";
-import { TiDelete } from "react-icons/ti";
+import { GoTrash } from "react-icons/go";
 import { AiOutlinePlus } from "react-icons/ai";
 import { AiOutlineMinus } from "react-icons/ai";
 import React from 'react'
@@ -23,8 +23,7 @@ const CartItens: React.FC<CartItensProps> = ({product}) => {
   const incrementQuantity = useCartStore((state) => state.incrementQuantity)
   const decrementQuantity = useCartStore((state) => state.decrementQuantity)
   
-
-   return(
+     return(
     <div className="flex items-center">
       {/* imagem */}
     <div className="w-36 h-40 flex-shrink-0 overflow-hidden mb-4 border-4 border-black rounded-lg">
@@ -74,10 +73,11 @@ const CartItens: React.FC<CartItensProps> = ({product}) => {
               }
             }}
           >
-            <div className="text-red-800 hover:cursor-pointer text-2xl">
-            <TiDelete/> 
+            <div className="text-gray-400 hover:text-red-400 hover:cursor-pointer text-2xl">
+            <GoTrash/> 
             </div>
           </button>
+          
       </section>                          
     </div>
     </div>

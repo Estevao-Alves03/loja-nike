@@ -6,11 +6,14 @@ import About from './Components/Pages/About';
 import Contacts from './Components/Pages/Contact';
 import Login from './Components/Pages/Login';
 import Register from './Components/Pages/Register';
-import ProductDetail from "./Components/Pages/ProductDetail";
-import Checkout from "./Components/Pages/Checkout";
+import Checkout from "./Components/Layout/CheckoutSteps";
+import CartPage from "./Components/Pages/CartPage";
+import Payment from "./Components/Pages/Payment";
 // importaçao das paginas de layout
 import Navbar from "./Components/Layout/Navbar";
 import Footer from "./Components/Layout/Footer";
+import ProductDetail from "./Components/Pages/ProductDetail";
+import PrivateRoute from "./Components/PrivateRoute";
 
 function App() {
   return (
@@ -23,11 +26,16 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/Products/:id" element={<ProductDetail />} />
-        <Route path="/Checkout" element={<Checkout/>} />
+        <Route path="/Checkout" element={<Checkout currentStep={1}/>} />
+                 {/* Rotas protegidas */}
+        <Route element={<PrivateRoute />}>
+          <Route path="/CartPage" element={<CartPage />} />
+          <Route path="/Payment" element={<Payment />} />
+        </Route>     
       </Routes>
       <Footer />
     </Router>
-  );
+  )
 }
 
 export default App;

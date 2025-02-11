@@ -1,13 +1,26 @@
 import { Button } from "../../components/ui/button"
 import { Link } from 'react-router-dom'
 import { HiOutlineMagnifyingGlass } from "react-icons/hi2";
+import { useUserStore } from "../../Zustand/UserStore";
+import { useEffect } from "react";
+import Alert from "../Layout/Alert";
 
 function Home() {
 
+    const { loginMessage, setLoginMessage } = useUserStore();
+
+    useEffect(() => {
+        if (loginMessage) {
+            setTimeout(() => setLoginMessage(null), 3000);
+        }
+    }, [loginMessage, setLoginMessage]);
+
     return(
       <div>
-         <div className="h-96 w-full bg-center bg-cover p-60 mt-3 mb-2"
-            style={{ backgroundImage: `url("/img/fundo.png")` }}>
+         {loginMessage && <Alert message={loginMessage} type="success" />}
+         
+         <div className="h-96 w-full bg-center bg-cover p-60 mt-3 mb-2 border-none"
+            style={{ backgroundImage: `url("/img/logo.jpg")` }}>
         </div>
 
           <div className="flex justify-center items-center">
@@ -31,7 +44,7 @@ function Home() {
                     </section>
                     <section className="flex justify-center">
                         <div className="h-96 w-80 bg-cover bg-center rounded-md border-4 border-black"
-                            style={{backgroundImage : `url("/img/img2.webp")`}}>
+                            style={{backgroundImage : `url("/img/img2.jpeg")`}}>
                             <h2 className="text-3xl text-white font-bold mt-5 ml-6 mr-24 p-1 rounded-tl-md rounded-tr-md rounded-br-md bg-black bg-opacity-65">tenis branco</h2>
                             <p className="text-md text-white font-semibold s ml-6 mr-52 p-1 rounded-bl-md rounded-br-md bg-black bg-opacity-65">Promoção</p>
                             <Link to="#">
@@ -41,8 +54,8 @@ function Home() {
                     </section>
                     <section className="flex justify-center">
                         <div className="h-96 w-80 bg-cover bg-center rounded-md border-4 border-black"
-                            style={{backgroundImage : `url("/img/img3.webp")`}}>
-                            <h2 className="text-3xl text-white font-bold mt-5 ml-6 mr-32 p-1 rounded-tl-md rounded-tr-md rounded-br-md bg-black bg-opacity-65">tenis cinza</h2>
+                            style={{backgroundImage : `url("/img/img3.jpg")`}}>
+                            <h2 className="text-3xl text-white font-bold mt-5 ml-6 mr-28 p-1 rounded-tl-md rounded-tr-md rounded-br-md bg-black bg-opacity-65">tenis preto</h2>
                             <p className="text-md text-white font-semibold s ml-6 mr-52 p-1 rounded-bl-md rounded-br-md bg-black bg-opacity-65">Promoção</p>
                             <Link to="#">
                                <Button className="ml-6 mt-56 bg-black hover:bg-zinc-900 hover:text-yellow-400" type="submit">Buy now</Button>

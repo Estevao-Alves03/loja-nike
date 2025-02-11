@@ -23,12 +23,14 @@ function About() {
                 </p>
             </div>
          <div className="h-96 w-full bg-cover bg-center border-4 border-black m-4 p-16"
-         style={{backgroundImage: (`url("/img/logo2.jpg")`)}}
+         style={{backgroundImage: (`url("/img/fundo.png")`)}}
          ></div>
-       </div>
-
-     
+       </div>     
     )
 }
 
 export default About
+
+
+
+

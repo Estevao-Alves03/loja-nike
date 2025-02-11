@@ -15,15 +15,9 @@ const schema = z.object({
   phone: z.string()
     .min(10, "o telefone deve ter no mínimo 10 caracteres")
     .max(15, "o telefone deve ter no máximo 15 caracteres"),
-  birth: z.string().refine(
-    (value) => {
-      const date = new Date(value);
-      return !isNaN(date.getTime());
-    },
-    { message: "insira uma data válida" }
-  ),
+  birth: z.coerce.date({ message: "Insira uma data válida" }),
   cpf: z.string()
-  .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "o CPF deve estar no formato 000.000.000-00"),
+  .regex(/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/, "CPF inválido"),
   password: z.string().min(6, "a senha deve ter no mínimo 6 caracteres"),
   confirmPassword: z.string().min(6, "a confirmação de senha deve ter no mínimo 6 caracteres"),
   nameStreet: z.string().min(1, "este campo é obrigatorio"),
@@ -62,6 +56,20 @@ function Register() {
   const navigate = useNavigate()
 
   function SendMessage(data: Register){
+    console.log("Dados enviados:", data); // Verifique os dados antes de enviar
+
+    const isValidDate = !isNaN(new Date(data.birth).getTime());
+    if (!isValidDate) {
+      console.error("Data de nascimento inválida", data.birth);
+      return;
+    }
+
+    const birthDate = new Date(data.birth).toISOString();
+    data.birth = birthDate;
+
+     const { name, lastname, email, cpf, phone, birth, nameStreet, neighborhood, complement, password, confirmPassword } = data;
+    console.log('Dados a serem salvos:', { name, lastname, email, cpf, phone, birth, nameStreet, neighborhood, complement, password, confirmPassword});
+
     fetch('http://localhost:3001/users', {
       method: 'POST',
       headers: {
@@ -71,20 +79,24 @@ function Register() {
     })
     .then(async (resp) => {
       if (!resp.ok) {
-        const error = await resp.json();
+        const error = await resp.json().catch(() => ({ message: 'Erro no cadastro' }));
         throw new Error(error.message || 'Erro no cadastro');
       }
-      const responseData = await resp.json();
+     
+        const responseData = await resp.json();
 
       if (responseData.token) {
         localStorage.setItem('authToken', responseData.token);
         console.log('Usuário cadastrado e autenticado com sucesso!');
       }
       reset()
-      navigate('/Home.tsx')
+      navigate('/')
       setValue('cpf', '')
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      console.error(err);
+    })
+    
   }
 
   useEffect(() => {
@@ -262,7 +274,7 @@ function Register() {
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder={errors.confirmPassword ? "As senhas não coincidem" : "Confirme sua senha"}
+                    placeholder={errors.confirmPassword ? "As senhas devem ser iguais" : "Confirme sua senha"}
                     {...register("confirmPassword")}
                     className={`text-black w-full pr-10 ${errors.confirmPassword ? "border-red-500" : ""}`}
                     onCopy={(e) => e.preventDefault()}
@@ -291,7 +303,7 @@ function Register() {
 
             <button
               type="submit"
-              className="w-full hover:bg-zinc-900 bg-black py-2 px-4 rounded-md">
+              className="w-full hover:bg-zinc-900 bg-black py-2 px-4 rounded-md text-white">
               Enviar
             </button>
             <div className="flex items-center justify-center  text-black text-center">

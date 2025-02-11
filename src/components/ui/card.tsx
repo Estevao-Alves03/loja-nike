@@ -1,30 +1,76 @@
-import * as React from "react";
-import clsx from "clsx";
-import { twMerge } from "tailwind-merge";
+import * as React from "react"
 
-// Função para mesclar classes, priorizando o Tailwind
-export function cn(...inputs: (string | undefined)[]) {
-  return twMerge(clsx(inputs.filter(Boolean))); // Remove valores indefinidos ou nulos
-}
+import { cn } from "../../lib/utils"
 
-// Função utilitária para criar componentes reutilizáveis
-function createComponent(baseClass: string) {
-  return React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-    ({ className, ...props }, ref) => (
-      <div ref={ref} className={cn(baseClass, className)} {...props} />
-    )
-  );
-}
+const Card = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50",
+      className
+    )}
+    {...props}
+  />
+))
+Card.displayName = "Card"
 
-// Componente Card e subcomponentes
-const Card = createComponent(
-  "rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50"
-);
-const CardHeader = createComponent("flex flex-col space-y-1.5 p-6");
-const CardTitle = createComponent("font-semibold leading-none tracking-tight");
-const CardDescription = createComponent("text-sm text-neutral-500 dark:text-neutral-400");
-const CardContent = createComponent("p-6 pt-0");
-const CardFooter = createComponent("flex items-center p-6 pt-0");
+const CardHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    {...props}
+  />
+))
+CardHeader.displayName = "CardHeader"
 
-// Exportando os componentes
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+const CardTitle = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("font-semibold leading-none tracking-tight", className)}
+    {...props}
+  />
+))
+CardTitle.displayName = "CardTitle"
+
+const CardDescription = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("text-sm text-neutral-500 dark:text-neutral-400", className)}
+    {...props}
+  />
+))
+CardDescription.displayName = "CardDescription"
+
+const CardContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+))
+CardContent.displayName = "CardContent"
+
+const CardFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center p-6 pt-0", className)}
+    {...props}
+  />
+))
+CardFooter.displayName = "CardFooter"
+
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }

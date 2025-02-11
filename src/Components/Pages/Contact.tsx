@@ -145,7 +145,7 @@ function Contact() {
                                 </div>
                             </div>
                             <CardFooter className="flex items-center justify-center">
-                                <button type="submit" className="w-10/12 mt-3 bg-black hover:bg-zinc-900 py-2 px-4 rounded-md">
+                                <button type="submit" className="w-10/12 mt-3 bg-black text-white hover:bg-zinc-900 py-2 px-4 rounded-md">
                                     Enviar
                                 </button>
                             </CardFooter>
