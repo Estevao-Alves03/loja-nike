@@ -95,7 +95,7 @@ function Home() {
                              style={{backgroundImage : `url("/img/camisaportugalpreta.jpg")`}}></div>
                         </Link>
                         <h2 className="flex items-center justify-center font-bold">Camisa Portugal preta</h2>
-                        <h3 className="font-black">R$:330,00</h3>
+                        <h3 className="font-black">R$:150,00</h3>
                     </section> 
                     <section className="flex flex-col justify-center items-center">
                         <Link to="./Products/2">
@@ -103,7 +103,7 @@ function Home() {
                              style={{backgroundImage : `url("/img/camisaalemanhadieadler.jpg")`}}></div>
                         </Link>
                         <h2 className="flex items-center justify-center font-bold">Camisa Alemanha "Die Adler"</h2>
-                        <h3 className="font-black">R$:330,00</h3>
+                        <h3 className="font-black">R$:180,00</h3>
                     </section>
                     <section className="flex flex-col justify-center items-center">
                         <Link to="./Products/3">
@@ -111,7 +111,7 @@ function Home() {
                              style={{backgroundImage : `url("/img/novacamisatitulardobayern.jpg")`}}></div>
                         </Link>
                         <h2 className="flex items-center justify-center font-bold ">Nova camisa titular do Bayern</h2>
-                        <h3 className="font-black">R$:330,00</h3>
+                        <h3 className="font-black">R$:220,00</h3>
                     </section>
                     <section className="flex flex-col justify-center items-center">
                         <Link to="./Products/4">
@@ -119,7 +119,7 @@ function Home() {
                              style={{backgroundImage : `url("/img/camisarealmadridfourth.jpg")`}}></div>
                         </Link>
                         <h2 className="flex items-center justify-center font-bold ">Camisa Real Madrid Fourth</h2>
-                        <h3 className="font-black">R$:330,00</h3>
+                        <h3 className="font-black">R$:250,00</h3>
                     </section>
                     <section className="flex flex-col justify-center items-center">
                         <Link to="./Products/5">
@@ -127,7 +127,7 @@ function Home() {
                              style={{backgroundImage : `url("/img/camisetaselecaobrasileira.jpg")`}}></div>
                         </Link>
                         <h2 className="flex items-center justify-center font-bold ">Camiseta seleção brasileira</h2>
-                        <h3 className="font-black">R$:330,00</h3>
+                        <h3 className="font-black">R$:200,00</h3>
                     </section>
                     <section className="flex flex-col justify-center items-center">
                         <Link to="./Products/6">
@@ -135,7 +135,7 @@ function Home() {
                              style={{backgroundImage : `url("/img/camisaselecaoargentina.jpg")`}}></div>
                         </Link>
                         <h2 className="flex items-center justify-center font-bold ">Camisa seleção argentina</h2>
-                        <h3 className="font-black">R$:330,00</h3>
+                        <h3 className="font-black">R$:270,00</h3>
                     </section>
                     <section className="flex flex-col justify-center items-center">
                         <Link to="./Products/7">
@@ -143,7 +143,7 @@ function Home() {
                              style={{backgroundImage : `url("/img/camisamanchesterunited.jpg")`}}></div>
                         </Link>
                         <h2 className="flex items-center justify-center font-bold ">Camisa Manchester United</h2>
-                        <h3 className="font-black">R$:330,00</h3>
+                        <h3 className="font-black">R$:300,00</h3>
                     </section>
                     <section className="flex flex-col justify-center items-center">
                         <Link to="./Products/8">
@@ -151,7 +151,7 @@ function Home() {
                             style={{backgroundImage : `url("/img/camisapsg.jpg")`}}></div>
                         </Link>
                         <h2 className="flex items-center justify-center font-bold ">Camisa PSG</h2>
-                        <h3 className="font-black">R$:330,00</h3>
+                        <h3 className="font-black">R$:190,00</h3>
                     </section>
                     <section className="flex flex-col justify-center items-center">                                                  
                         <Link to="./Products/9">
@@ -159,7 +159,7 @@ function Home() {
                             style={{backgroundImage : `url("/img/camisamanchestercity.jpg")`}}></div>
                         </Link>
                         <h2 className="flex items-center justify-center font-bold">Camisa Manchester City</h2>
-                        <h3 className="font-black">R$:330,00</h3>
+                        <h3 className="font-black">R$:230,00</h3>
                     </section>
                     <section className="flex flex-col justify-center items-center">
                         <Link to="./Products/10">
@@ -167,7 +167,7 @@ function Home() {
                             style={{backgroundImage : `url("/img/camisabarcelona.jpg")`}}></div>
                         </Link>
                         <h2 className="flex items-center justify-center font-bold">Camisa Barcelona </h2>
-                        <h3 className="font-black">R$:330,00</h3>
+                        <h3 className="font-black">R$:280,00</h3>
                     </section>
                 </div>
           </main>

@@ -22,26 +22,32 @@ function ProductDetail() {
         .get(`http://localhost:3001/products/${id}`)
         .then((response) => {
           const productData = response.data;
+          console.log("Dados do produto:", productData); // 🛠 Debugando
     
+          // Ajustando os nomes corretamente
           const adjustedProduct = {
-            id: productData.codProduct,
-            name: productData.nameProduct,
+            id: productData.cod_product,  // Correção do nome da chave
+            name: productData.name_product,  // Correção do nome da chave
             description: productData.description,
             price: productData.price,
           };
     
-          // const sanitizeName = (name: string) =>
-          //   name.toLowerCase().replace(/ /g, "").replace(/[^\w]/g, "") 
-
-          const sanitizeName = (name: string) =>
-            name
+          if (!adjustedProduct.name) {
+            console.warn("Produto sem nome, usando imagem padrão.");
+            setProduct({ ...adjustedProduct, image: "/img/default.jpg" });
+            return;
+          }
+    
+          const sanitizeName = (name?: string) => {
+            if (!name) return "produto-desconhecido";
+            return name
               .toLowerCase()
-              .normalize("NFD") // Remove acentos
-              .replace(/[\u0300-\u036f]/g, "") // Remove marcas de acento
-              .replace(/ /g, "") // Remove espaços
-              .replace(/ç/g, "c") // Substitui 'ç' por 'c'
-              .replace(/[^\w]/g, ""); // Remove caracteres especiais
-          
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .replace(/ /g, "")
+              .replace(/ç/g, "c")
+              .replace(/[^\w]/g, "");
+          };
     
           const findImage = async () => {
             const sanitizedName = sanitizeName(adjustedProduct.name);
@@ -50,7 +56,7 @@ function ProductDetail() {
     
             for (const ext of possibleExtensions) {
               const testPath = `/img/${sanitizedName}${ext}`;
-              console.log(`Testando imagem no caminho: ${testPath}`); // Loga o caminho gerado
+              console.log(`Testando imagem no caminho: ${testPath}`);
               const response = await fetch(testPath);
               if (response.ok) {
                 return testPath;
@@ -69,7 +75,7 @@ function ProductDetail() {
         })
         .catch((error) => console.error("Erro ao buscar produto:", error));
     }, [id]);
-2    
+    
       
 
     if (!product) {

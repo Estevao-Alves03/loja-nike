@@ -47,7 +47,6 @@ function Register() {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm<Register>({
     resolver: zodResolver(schema),
@@ -55,49 +54,96 @@ function Register() {
 
   const navigate = useNavigate()
 
-  function SendMessage(data: Register){
-    console.log("Dados enviados:", data); // Verifique os dados antes de enviar
 
-    const isValidDate = !isNaN(new Date(data.birth).getTime());
-    if (!isValidDate) {
-      console.error("Data de nascimento inválida", data.birth);
-      return;
-    }
+  function SendMessage(data: Register) {
+  console.log("Dados enviados:", data);
 
-    const birthDate = new Date(data.birth).toISOString();
-    data.birth = birthDate;
+  const isValidDate = !isNaN(new Date(data.birth).getTime());
+  if (!isValidDate) {
+    console.error("Data de nascimento inválida", data.birth);
+    return;
+  }
 
-     const { name, lastname, email, cpf, phone, birth, nameStreet, neighborhood, complement, password, confirmPassword } = data;
-    console.log('Dados a serem salvos:', { name, lastname, email, cpf, phone, birth, nameStreet, neighborhood, complement, password, confirmPassword});
+  const formattedBirth = new Date(data.birth).toISOString().split("T")[0];
 
-    fetch('http://localhost:3001/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
+  const formData = {
+    name: data.name,
+    lastname: data.lastname,
+    email: data.email,
+    phone: data.phone,
+    birth: formattedBirth,
+    complement: data.complement,
+    confirm_password: data.confirmPassword,
+    cpf: data.cpf,
+    password: data.password,
+    name_street: data.nameStreet,
+    neighborhood: data.neighborhood,
+  };
+
+  console.log("Formulário antes do envio:", formData);
+
+  fetch("http://localhost:3001/users", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  })
+    .then(async (resp) => {
+      if (!resp.ok) {
+        const error = await resp.json().catch(() => ({ message: "Erro no cadastro" }));
+        throw new Error(error.message || "Erro no cadastro");
+      }
+      return resp.json();
+    })
+    .then((userData) => {
+      console.log("Resposta da API (usuário criado):", userData);
+
+      const user_id = userData?.id || userData?.data?.id;
+      console.log("User ID recebido:", user_id);
+
+      if (!user_id) {
+        throw new Error("O ID do usuário não foi retornado corretamente.");
+      }
+
+      console.log("Enviando endereço com user_id:", user_id);
+
+      const addressData = {
+        user_id,
+        name_street: formData.name_street,
+        neighborhood: formData.neighborhood,
+        complement: formData.complement,
+      };
+
+      console.log("Dados do endereço:", addressData);
+
+      return fetch("http://localhost:3001/addresses", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(addressData),
+      });
     })
     .then(async (resp) => {
       if (!resp.ok) {
-        const error = await resp.json().catch(() => ({ message: 'Erro no cadastro' }));
-        throw new Error(error.message || 'Erro no cadastro');
+        const error = await resp.json().catch(() => ({ message: "Erro ao cadastrar endereço" }));
+        throw new Error(error.message || "Erro ao cadastrar endereço");
       }
-     
-        const responseData = await resp.json();
-
-      if (responseData.token) {
-        localStorage.setItem('authToken', responseData.token);
-        console.log('Usuário cadastrado e autenticado com sucesso!');
-      }
-      reset()
-      navigate('/')
-      setValue('cpf', '')
+      return resp.json();
+    })
+    .then(() => {
+      console.log("Usuário e endereço cadastrados com sucesso!");
+      reset();
+      navigate("/");
     })
     .catch((err) => {
-      console.error(err);
-    })
-    
-  }
+      console.error("Erro:", err.message);
+    });
+}
+
+  
+  
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
