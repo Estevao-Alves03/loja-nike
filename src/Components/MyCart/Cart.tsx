@@ -59,12 +59,12 @@ function Cart() {
             {showAlert && <Alert message="É preciso estar logado para finalizar a compra!" type="error" />} 
 
             <Sheet open={IsCartOpen} onOpenChange={setIsCartOpen}>
-                <SheetTrigger>Carrinho</SheetTrigger>
+                <SheetTrigger>Cart</SheetTrigger>
                 <SheetContent className="h-screen overflow-x-auto !bg-white">
                     <SheetHeader>
-                        <SheetTitle className="!text-black">Seus Produtos:</SheetTitle>
+                        <SheetTitle className="!text-black">Your products:</SheetTitle>
                         <SheetDescription className="pb-5 !text-black">
-                            Adicione mais itens ao seu carrinho!
+                            Add more items in your cart!
                         </SheetDescription>
                     </SheetHeader>
                     {cart.length > 0 ? (
@@ -77,7 +77,7 @@ function Cart() {
                                 <Button 
                                     onClick={handleCheckout} 
                                     className="bg-black hover:bg-black hover:text-yellow-400">
-                                    finalizar compra
+                                    finish purchase
                                     <span className="ml-2">
                                         <FaShopify />
                                     </span>

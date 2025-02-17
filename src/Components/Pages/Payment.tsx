@@ -11,15 +11,15 @@ const Payment = () => {
 
   return (
     <div>
-      <CheckoutSteps currentStep={2} />
+      <CheckoutSteps currentStep={3} />
       <div className="max-w-md mx-auto bg-white p-6 border rounded-lg shadow-lg">
         <h2 className="text-lg font-semibold mb-4">Pagamento</h2>
 
         {/* Opções de pagamento */}
         <h3 className="text-sm font-semibold mb-2">Selecione um meio de pagamento</h3>
-        <div className="space-y-2">
+        <div className="space-y-3">
             {/* Pix */}
-            <label className="flex items-center space-x-2 cursor-pointer">
+            <label className="flex items-center space-x-3 cursor-pointer">
             <input
               type="radio"
               name="payment"
@@ -32,21 +32,43 @@ const Payment = () => {
             <span className="text-xs text-green-600">(Ganhe até 3% de desconto)</span>
           </label>
           {/* Cartão de Crédito */}
-          <label className="flex items-center space-x-2 cursor-pointer">
+          <label className="flex items-center space-x-3 cursor-pointer">
             <input
               type="radio"
               name="payment"
-              value="credit"
-              checked={paymentMethod === "credit"}
-              onChange={() => setPaymentMethod("credit")}
+              value="credit_card"
+              checked={paymentMethod === "credit_card"}
+              onChange={() => setPaymentMethod("credit_card")}
               className="accent-black"
             />
             <span>Cartão de crédito</span>
-            <span className="text-xs text-gray-500">(Parcele sem juros)</span>
+            {/* <span className="text-xs text-gray-500">(Parcele sem juros)</span> */}
+          </label>
+          {/* Cartao de Débito */}
+          <label className="flex items-center space-x-3 cursor-pointer">
+            <input type="radio"
+            name="payment"
+            value="debit_card" 
+            checked={paymentMethod === "debit_card"}
+            onChange={() => setPaymentMethod("debit_card")}
+            className="accent-black"
+            />
+          <span>Cartão de débito</span>
+          </label>
+           {/* Paypal */}
+           <label className="flex items-center space-x-3 cursor-pointer">
+            <input type="radio"
+            name="payment"
+            value="paypal" 
+            checked={paymentMethod === "paypal"}
+            onChange={() => setPaymentMethod("paypal")}
+            className="accent-black"
+            />
+          <span>Paypal</span>
           </label>
         </div>
 
-        {/* Formulário de Cartão de Crédito */}
+        {/* Formulário de Cartão de Crédito
         {paymentMethod === "credit" && (
           <div className="mt-4 p-4 border border-gray-300 rounded-md bg-gray-50 text-sm">
             <h3 className="text-md font-semibold mb-2">Preencha os dados do cartão</h3>
@@ -83,7 +105,7 @@ const Payment = () => {
               <span>Salvar cartão para compras futuras</span>
             </label>
           </div>
-        )}
+        )} */}
 
         {/* Resumo do Pagamento */}
         <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
