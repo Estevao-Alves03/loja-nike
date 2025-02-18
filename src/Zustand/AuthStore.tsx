@@ -1,5 +1,11 @@
 import { create } from "zustand";
 
+// Função para carregar o estado salvo no localStorage
+const getStoredAuthState = () => {
+  const storedUser = localStorage.getItem("user");
+  return storedUser ? { isAuthenticated: true, user: JSON.parse(storedUser) } : { isAuthenticated: false, user: null };
+};
+
 type AuthState = {
   isAuthenticated: boolean;
   user: any | null;
@@ -8,10 +14,16 @@ type AuthState = {
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: false,
-  user: null,
+  ...getStoredAuthState(), // 🔹 Carrega o estado salvo no localStorage
 
-  login: (user) => set({ isAuthenticated: true, user }),
+  login: (user) => {
+    localStorage.setItem("user", JSON.stringify(user)); // 🔹 Salva no localStorage
+    set({ isAuthenticated: true, user });
+  },
 
-  logout: () => set({ isAuthenticated: false, user: null }),
+  logout: () => {
+    localStorage.removeItem("user"); // 🔹 Remove do localStorage ao deslogar
+    localStorage.removeItem("authToken"); // 🔹 Remove o token também
+    set({ isAuthenticated: false, user: null });
+  }
 }));

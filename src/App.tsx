@@ -9,6 +9,7 @@ import Register from './Components/Pages/Register';
 import Checkout from "./Components/Layout/CheckoutSteps";
 import CartPage from "./Components/Pages/CartPage";
 import Payment from "./Components/Pages/Payment";
+import Orders from "./Components/Pages/Orders";
 // importaçao das paginas de layout
 import Navbar from "./Components/Layout/Navbar";
 import Footer from "./Components/Layout/Footer";
@@ -31,6 +32,7 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/CartPage" element={<CartPage />} />
           <Route path="/Payment" element={<Payment />} />
+          <Route path="/Orders" element={<Orders />} />
         </Route>     
       </Routes>
       <Footer />

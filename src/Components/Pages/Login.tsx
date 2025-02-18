@@ -18,7 +18,7 @@ const schema = z.object({
 
 function Login() {
 
-    const currentUser = useUserStore((state) => state.currentUser);
+    // const currentUser = useUserStore((state) => state.currentUser);
     const navigate = useNavigate();
 
     // const [message, setMessage] = useState<string | null>(null); // Estado para a mensagem de sucesso
@@ -49,8 +49,11 @@ function Login() {
 
         console.log("Antes do login Zustand:", useAuthStore.getState().isAuthenticated);
         
-        useAuthStore.getState().login(response.data.data.user); 
-        useUserStore.getState().login(response.data.data.user, "Login realizado com sucesso!"); 
+        useAuthStore.getState().login(response.data.data.user);
+        useUserStore.getState().login(response.data.data.user, "Login realizado com sucesso!");
+        
+        localStorage.setItem('authToken', response.data.data.token); // 🔹 Salva o token
+        
 
         console.log("Depois do login Zustand:", useAuthStore.getState().isAuthenticated);
 
@@ -63,11 +66,13 @@ function Login() {
 };
 
  
+    const { isAuthenticated } = useAuthStore();
+
     useEffect(() => {
-        if (currentUser) {
+        if (isAuthenticated) {
             navigate('/');
         }
-    }, [currentUser, navigate]);
+    }, [isAuthenticated, navigate]);
 
     
     function handleForgetPassword() {
