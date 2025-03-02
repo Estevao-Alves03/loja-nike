@@ -4,40 +4,44 @@ interface User {
     id: number;
     email: string;
     password: string;
+    authToken?: string; // 🔹 Adiciona o token no usuário
     address?: {
       name_street: string;
       neighborhood: string;
       complement: string;
     };
-}
-
-type UserState = {
+  }
+  
+  type UserState = {
     currentUser: User | null;
     loginMessage: string | null;
-    login: (user: User, message?: string | null) => void;
+    login: (user: User, token: string, message?: string | null) => void;
     logout: () => void;
     setLoginMessage: (message: string | null) => void;
-};
-
-// Função para carregar o usuário do localStorage
-const getStoredUser = (): User | null => {
+  };
+  
+  const getStoredUser = (): User | null => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
-};
-
-export const useUserStore = create<UserState>((set) => ({
-    currentUser: getStoredUser(), // 🔹 Carrega do localStorage ao iniciar
+  };
+  
+  export const useUserStore = create<UserState>((set) => ({
+    currentUser: getStoredUser(),
     loginMessage: null,
-
-    login: (user, message = null) => {
-        localStorage.setItem("user", JSON.stringify(user)); // 🔹 Salva no localStorage
-        set({ currentUser: user, loginMessage: message });
+  
+    login: (user, token, message = null) => {
+      user.authToken = token; // 🔹 Adiciona o token ao usuário
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("authToken", token); // 🔹 Salva o token
+      set({ currentUser: user, loginMessage: message });
     },
-
+  
     logout: () => {
-        localStorage.removeItem("user"); // 🔹 Remove do localStorage ao deslogar
-        set({ currentUser: null, loginMessage: null });
+      localStorage.removeItem("user");
+      localStorage.removeItem("authToken");
+      set({ currentUser: null, loginMessage: null });
     },
-
+  
     setLoginMessage: (message) => set({ loginMessage: message }),
-}));
+  }));
+  

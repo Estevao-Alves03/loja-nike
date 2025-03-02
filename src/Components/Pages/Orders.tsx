@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useUserStore } from "../../Zustand/UserStore";
+import api from "../../services/Api";
 
 interface Product {
   id: number;
@@ -22,50 +23,45 @@ interface Order {
 
 const Orders = () => {
   const { currentUser } = useUserStore();
+  const authToken = currentUser?.authToken || "";
   const [orders, setOrders] = useState<Order[]>([]);
   const [activeTab, setActiveTab] = useState("all");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const fetchOrders = useCallback(async () => {
-    if (!currentUser?.id) return;
+  setLoading(true);
+  setError(null);
 
-    setLoading(true);
-    setError(null);
+  try {
+    const { data: ordersData } = await api.get(`/orders`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`, // Enviamos o token no cabeçalho
+      },
+    });
 
-    try {
-      const response = await fetch(`http://localhost:3001/orders?user_id=${currentUser.id}`);
-      if (!response.ok) throw new Error(`Erro ${response.status}: ${response.statusText}`);
+    console.log("Pedidos encontrados:", ordersData);
 
-      const ordersData: Order[] = await response.json();
-      console.log("Pedidos encontrados:", ordersData);
+    const ordersWithProducts = await Promise.all(
+      ordersData.map(async (order: Order) => {
+        try {
+          const { data: productsData } = await api.get(`/order_items?order_id=${order.id}`, {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
 
-      // Usando um Set para evitar IDs duplicados
-      const uniqueOrders = new Map<number, Order>();
-
-      const ordersWithProducts = await Promise.all(
-        ordersData.map(async (order) => {
-          if (uniqueOrders.has(order.id)) return uniqueOrders.get(order.id);
-
-          const productsResponse = await fetch(`http://localhost:3001/order_items?order_id=${order.id}`);
-          if (!productsResponse.ok) throw new Error(`Erro ao buscar produtos do pedido ${order.id}`);
-
-          const productsData = await productsResponse.json();
           console.log(`Produtos do pedido ${order.id}:`, productsData);
 
-          const validProducts = productsData.filter((item: { product_id?: number }) => item.product_id);
-
           const detailedProducts = await Promise.all(
-            validProducts.map(async (item: { product_id: number; quantity: number }) => {
+            productsData.map(async (item: { product_id: number; quantity: number }) => {
               try {
-                const productResponse = await fetch(`http://localhost:3001/products?cod_product=${item.product_id}`);
+                const { data: productDetails } = await api.get(`/products?cod_product=${item.product_id}`, {
+                  headers: {
+                    Authorization: `Bearer ${authToken}`,
+                  },
+                });
 
-                if (!productResponse.ok) {
-                  throw new Error(`Erro ao buscar detalhes do produto ${item.product_id}`);
-                }
-
-                const productDetails: Product[] = await productResponse.json();
-                const matchedProduct = productDetails.find((p) => p.cod_product === item.product_id);
+                const matchedProduct = productDetails.find((p: Product) => p.cod_product === item.product_id);
 
                 if (!matchedProduct) {
                   console.warn(`Produto com ID ${item.product_id} não encontrado.`);
@@ -80,27 +76,24 @@ const Orders = () => {
             })
           );
 
-          const filteredProducts = detailedProducts.filter((p) => p !== null);
+          return { ...order, products: detailedProducts.filter(Boolean) };
+        } catch (error) {
+          console.error(`Erro ao buscar produtos do pedido ${order.id}:`, error);
+          return { ...order, products: [] };
+        }
+      })
+    );
 
-          console.log(`Produtos detalhados (Pedido ${order.id}):`, filteredProducts);
+    console.log("Pedidos finalizados corretamente:", ordersWithProducts);
+    setOrders(ordersWithProducts);
+  } catch (error) {
+    setError("Não foi possível carregar os pedidos. Tente novamente mais tarde.");
+    console.error("Erro ao buscar pedidos:", error);
+  } finally {
+    setLoading(false);
+  }
+}, [authToken]); // Agora dependemos do `authToken` e não do `currentUser`
 
-          const updatedOrder = { ...order, products: filteredProducts };
-          uniqueOrders.set(order.id, updatedOrder);
-          return updatedOrder;
-        })
-      );
-
-      // Removendo possíveis `undefined` gerados por promessas que falharam
-      const filteredOrders = ordersWithProducts.filter((order) => order !== undefined) as Order[];
-
-      setOrders(filteredOrders);
-    } catch (error) {
-      setError("Não foi possível carregar os pedidos. Tente novamente mais tarde.");
-      console.error("Erro ao buscar pedidos:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [currentUser]);
 
   useEffect(() => {
     fetchOrders();
@@ -112,7 +105,6 @@ const Orders = () => {
     <div className="max-w-4xl mx-auto p-4">
       <h2 className="text-xl font-bold mb-4">Meus Pedidos</h2>
 
-      {/* Tabs de filtro */}
       <div className="flex space-x-4 border-b">
         {["all", "pending", "paid", "shipped", "delivered", "canceled"].map((status) => (
           <button
