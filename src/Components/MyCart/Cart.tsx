@@ -31,9 +31,18 @@ function Cart() {
     function handleCheckout() {
         if (!isAuthenticated) {
             setShowAlert(true);
-            setTimeout(() => setShowAlert(false), 3000);
-            return;
+            setTimeout(() => {
+                setShowAlert(false)
+                setIsCartOpen(false)
+            }, 2000);
         }
+
+        setIsLoading(true)
+
+        setTimeout(() => {
+            setIsLoading(false)
+            navigate("/login")
+        }, 3000);
 
         setIsCartOpen(false);
         setIsLoading(true);
@@ -42,6 +51,7 @@ function Cart() {
             setIsLoading(false);
             navigate('/cartpage');
         }, 3000);
+        return
     }
 
     useEffect(() => {

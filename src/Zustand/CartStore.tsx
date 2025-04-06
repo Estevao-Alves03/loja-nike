@@ -67,7 +67,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     calculateTotals: () => {
         const cart = get().cart;
         const totalPrice = cart.reduce((total: number, product: Item) => total + Number(product.price) * product.quantity, 0);
-        const discount = (35 / 100) * totalPrice;
+        const discount = (5 / 100) * totalPrice;
         const finalPrice = totalPrice - discount;
 
         set({ totalPrice, discount, finalPrice });

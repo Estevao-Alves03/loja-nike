@@ -36,7 +36,7 @@ const Payment = () => {
         })),
       };
 
-      const response = await fetch("http://localhost:3001/orders", {
+      const response = await fetch("http://localhost:3002/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +86,7 @@ const Payment = () => {
                   className="accent-black"
                 />
                 <span>Pix</span>
-                <span className="text-xs text-green-600">(Ganhe até 3% de desconto)</span>
+                <span className="text-xs text-green-600">(Ganhe até 5% de desconto)</span>
               </label>
               <label className="flex items-center space-x-3 cursor-pointer">
                 <input

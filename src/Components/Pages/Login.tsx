@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useUserStore } from "../../Zustand/UserStore";
 import { useForm } from 'react-hook-form';
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,7 @@ import { Card, CardTitle, CardContent, CardDescription, CardFooter, CardHeader }
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import api from "../../services/Api";
-// import Alert from "../Layout/Alert"; // Importe o componente de alerta
+import Alert from "../Layout/Alert"; 
 import { useAuthStore } from "../../Zustand/AuthStore";
 
 const schema = z.object({
@@ -20,6 +20,7 @@ function Login() {
 
     // const currentUser = useUserStore((state) => state.currentUser);
     const navigate = useNavigate();
+    const [alert, setAlert] = useState<null | {message:string, type: "success" | "error" | "warning" | "info"}>(null)
 
     // const [message, setMessage] = useState<string | null>(null); // Estado para a mensagem de sucesso
     interface FormData { 
@@ -58,7 +59,12 @@ function Login() {
         console.log("Depois do login Zustand:", useAuthStore.getState().isAuthenticated);
 
         localStorage.setItem('authToken', response.data.data.token);
-        navigate('/'); 
+        setAlert({message: "login realizado com succeso!", type:"success"})
+
+        setTimeout(() => {
+            setAlert(null)
+            navigate('/'); 
+        }, 2000);
 
     } catch (error) {
         console.error("Erro ao tentar logar:", error);
@@ -66,13 +72,13 @@ function Login() {
 };
 
  
-    const { isAuthenticated } = useAuthStore();
+    // const { isAuthenticated } = useAuthStore();
 
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate('/');
-        }
-    }, [isAuthenticated, navigate]);
+    // useEffect(() => {
+    //     if (isAuthenticated) {
+    //         navigate('/');
+    //     }
+    // }, [isAuthenticated, navigate]);
 
     
     function handleForgetPassword() {
@@ -160,6 +166,8 @@ function Login() {
                     </CardContent>
                 </Card>
             </div>
+
+            {alert && <Alert message={alert.message} type={alert.type}/>}
         </div>
     );
 }

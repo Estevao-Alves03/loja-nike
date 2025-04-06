@@ -54,96 +54,58 @@ function Register() {
 
   const navigate = useNavigate()
 
-
   function SendMessage(data: Register) {
-  console.log("Dados enviados:", data);
-
-  const isValidDate = !isNaN(new Date(data.birth).getTime());
-  if (!isValidDate) {
-    console.error("Data de nascimento inválida", data.birth);
-    return;
-  }
-
-  const formattedBirth = new Date(data.birth).toISOString().split("T")[0];
-
-  const formData = {
-    name: data.name,
-    lastname: data.lastname,
-    email: data.email,
-    phone: data.phone,
-    birth: formattedBirth,
-    complement: data.complement,
-    confirm_password: data.confirmPassword,
-    cpf: data.cpf,
-    password: data.password,
-    name_street: data.nameStreet,
-    neighborhood: data.neighborhood,
-  };
-
-  console.log("Formulário antes do envio:", formData);
-
-  fetch("http://localhost:3001/users", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  })
-    .then(async (resp) => {
-      if (!resp.ok) {
-        const error = await resp.json().catch(() => ({ message: "Erro no cadastro" }));
-        throw new Error(error.message || "Erro no cadastro");
-      }
-      return resp.json();
+    console.log("Dados enviados:", data);
+  
+    const isValidDate = !isNaN(new Date(data.birth).getTime());
+    if (!isValidDate) {
+      console.error("Data de nascimento inválida", data.birth);
+      return;
+    }
+  
+    const formattedBirth = new Date(data.birth).toISOString().split("T")[0];
+  
+    const formData = {
+      name: data.name,
+      lastname: data.lastname,
+      email: data.email,
+      phone: data.phone,
+      birth: formattedBirth,
+      complement: data.complement,
+      confirm_password: data.confirmPassword,
+      cpf: data.cpf,
+      password: data.password,
+      name_street: data.nameStreet,
+      neighborhood: data.neighborhood,
+    };
+  
+    console.log("Formulário antes do envio:", formData);
+    console.log("enviando para o backend", JSON.stringify(formData, null, 2))
+  
+    fetch("http://localhost:3002/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
     })
-    .then((userData) => {
-      console.log("Resposta da API (usuário criado):", userData);
-
-      const user_id = userData?.id || userData?.data?.id;
-      console.log("User ID recebido:", user_id);
-
-      if (!user_id) {
-        throw new Error("O ID do usuário não foi retornado corretamente.");
-      }
-
-      console.log("Enviando endereço com user_id:", user_id);
-
-      const addressData = {
-        user_id,
-        name_street: formData.name_street,
-        neighborhood: formData.neighborhood,
-        complement: formData.complement,
-      };
-
-      console.log("Dados do endereço:", addressData);
-
-      return fetch("http://localhost:3001/addresses", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(addressData),
+      .then(async (resp) => {
+        if (!resp.ok) {
+          const error = await resp.json().catch(() => ({ message: "Erro no cadastro" }));
+          throw new Error(error.message || "Erro no cadastro");
+        }
+        return resp.json();
+      })
+      .then((userData) => {
+        console.log("Usuário cadastrado com sucesso:", userData);
+        reset();
+        navigate("/");
+      })
+      .catch((err) => {
+        console.error("Erro:", err.message);
       });
-    })
-    .then(async (resp) => {
-      if (!resp.ok) {
-        const error = await resp.json().catch(() => ({ message: "Erro ao cadastrar endereço" }));
-        throw new Error(error.message || "Erro ao cadastrar endereço");
-      }
-      return resp.json();
-    })
-    .then(() => {
-      console.log("Usuário e endereço cadastrados com sucesso!");
-      reset();
-      navigate("/");
-    })
-    .catch((err) => {
-      console.error("Erro:", err.message);
-    });
-}
-
-  
-  
+  }
+ 
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');

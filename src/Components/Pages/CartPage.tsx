@@ -5,6 +5,7 @@ import { GoTrash } from "react-icons/go";
 import { useCartStore } from "../../Zustand/CartStore";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Loading from "../Layout/Loading";
 
 const CartPage: React.FC = () => {
   const cart = useCartStore((state) => state.cart);
@@ -18,11 +19,17 @@ const CartPage: React.FC = () => {
 
   const [cep, setCep] = useState("");
   const [cupom, setCupom] = useState("");
+  const [IsLoading, setIsLoading] = useState(false)
 
   const navigate = useNavigate();
 
   function handleIdentification() {
-    navigate('/payment');
+    setIsLoading(true)
+   
+    setTimeout(() => {
+      setIsLoading(false)
+      navigate('/payment');
+    }, 2000);
   }
 
   // Chama calculateTotals toda vez que o carrinho for atualizado
@@ -32,6 +39,12 @@ const CartPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center w-full p-4">
+
+        {IsLoading && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <Loading />
+                </div>
+            )}
       <CheckoutSteps currentStep={1} />
 
       {/* Tabela do Carrinho */}

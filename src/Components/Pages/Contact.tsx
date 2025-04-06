@@ -4,7 +4,9 @@ import { Label } from "../../components/ui/label";
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
+import { useNavigate } from "react-router-dom";
+import Alert from "../Layout/Alert";
+import { useState } from "react";
 
 
 const schema = z.object({
@@ -29,22 +31,38 @@ interface Contact {
     birthdate: string;
 }
 
-function Contact() {
 
+function Contact() {
+    
+    const [alert, setAlert ] = useState<null | {message: string, type: "success" |  "error" | "warning" | "info"}>(null)
     const {handleSubmit, register,  reset, formState: { errors } } = useForm<Contact>({
         resolver: zodResolver(schema)
     })
 
+    const navigate = useNavigate()
+
     function SendMessage(data: Contact) {
+
+        const token = localStorage.getItem("authToken")
+
         const transformedData = {
             ...data,
             birth_date: data.birthdate // Transformando o campo para o formato esperado
         };
 
-        fetch('http://localhost:3001/contacts', {
+        if(!token){
+            setAlert({ message: "é preciso esta logado para enviar o formulario!", type: "warning"})
+            setTimeout(() => {
+                navigate("/login")
+            }, 2000);
+            return
+        }        
+
+        fetch('http://localhost:3002/contacts', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(transformedData) 
         })
@@ -52,8 +70,18 @@ function Contact() {
         .then((data) => {
             console.log(data);
             reset()
-        })
-        .catch((err) => console.log(err));
+            setAlert({message: "Enviado com sucesso!", type: "success"})
+
+            setTimeout(() => {
+                setAlert(null)
+            }, 3000);
+        })        
+
+        .catch((err) => {
+            console.log(err)
+            setAlert({message: "Erro ao enviar o formulario", type: "error"
+            })
+        });
     }
 
     return (
@@ -145,14 +173,17 @@ function Contact() {
                                 </div>
                             </div>
                             <CardFooter className="flex items-center justify-center">
-                                <button type="submit" className="w-10/12 mt-3 bg-black text-white hover:bg-zinc-900 py-2 px-4 rounded-md">
-                                    Enviar
+                                <button type="submit" 
+                                className="w-10/12 mt-3 bg-black text-white hover:bg-zinc-900 py-2 px-4 rounded-md">
+                                    {alert?.type === "success" ? "enviado com sucesso" : "enviar"}
                                 </button>
                             </CardFooter>
                         </form>
                     </CardContent>
                 </Card>
              </div>
+
+                {alert && <Alert message={alert.message} type={alert.type} />}
         </div>
     );
 }
