@@ -16,6 +16,7 @@ type CartStore = {
     removeFromCart: (id: string) => void 
     incrementQuantity: (id: string) => void
     decrementQuantity: (id: string) => void
+    setDiscount: (discount: number)=> void
     calculateTotals: () => void
     totalPrice: number
     discount: number
@@ -63,6 +64,13 @@ export const useCartStore = create<CartStore>((set, get) => ({
                     : item
             ),
         })),
+
+    setDiscount: (discount: number) => {
+        const totalPrice = get().totalPrice;
+        const finalPrice = totalPrice - discount
+        set({discount, finalPrice})
+    },
+    
 
     calculateTotals: () => {
         const cart = get().cart;

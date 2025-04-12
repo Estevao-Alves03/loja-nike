@@ -92,7 +92,7 @@ const Orders = () => {
   } finally {
     setLoading(false);
   }
-}, [authToken]); // Agora dependemos do `authToken` e não do `currentUser`
+}, [authToken]);
 
 
   useEffect(() => {

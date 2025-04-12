@@ -50,8 +50,7 @@ function Login() {
 
         console.log("Antes do login Zustand:", useAuthStore.getState().isAuthenticated);
         
-        useAuthStore.getState().login(response.data.data.user);
-        useUserStore.getState().login(response.data.data.user, "Login realizado com sucesso!");
+        useUserStore.getState().login(response.data.data.user, response.data.data.token, "Login realizado com sucesso!");
         
         localStorage.setItem('authToken', response.data.data.token); // 🔹 Salva o token
         
@@ -64,7 +63,7 @@ function Login() {
         setTimeout(() => {
             setAlert(null)
             navigate('/'); 
-        }, 2000);
+        }, 1500);
 
     } catch (error) {
         console.error("Erro ao tentar logar:", error);

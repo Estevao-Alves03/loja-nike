@@ -1,6 +1,8 @@
-// importaçao do react router dom
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// importaçao das paginas principais
+import { useUserStore } from "./Zustand/UserStore"; // 👈 importa a store
+
+// Páginas principais
 import Home from './Components/Pages/Home';
 import About from './Components/Pages/About';
 import Contacts from './Components/Pages/Contact';
@@ -10,13 +12,24 @@ import Checkout from "./Components/Layout/CheckoutSteps";
 import CartPage from "./Components/Pages/CartPage";
 import Payment from "./Components/Pages/Payment";
 import Orders from "./Components/Pages/Orders";
-// importaçao das paginas de layout
+
+// Layout
 import Navbar from "./Components/Layout/Navbar";
 import Footer from "./Components/Layout/Footer";
 import ProductDetail from "./Components/Pages/ProductDetail";
 import PrivateRoute from "./Components/PrivateRoute";
 
 function App() {
+  const setUser = useUserStore.setState;
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setUser({ currentUser: user });
+    }
+  }, []);
+
   return (
     <Router>
       <Navbar />
@@ -27,18 +40,18 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/Products/:id" element={<ProductDetail />} />
-        <Route path="/Checkout" element={<Checkout currentStep={1}/>} />
-                 {/* Rotas protegidas */}
+        <Route path="/Checkout" element={<Checkout currentStep={1} />} />
+
+        {/* Rotas protegidas */}
         <Route element={<PrivateRoute />}>
           <Route path="/CartPage" element={<CartPage />} />
           <Route path="/Payment" element={<Payment />} />
           <Route path="/Orders" element={<Orders />} />
-        </Route>     
+        </Route>
       </Routes>
       <Footer />
     </Router>
-  )
+  );
 }
 
 export default App;
-

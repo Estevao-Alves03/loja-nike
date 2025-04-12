@@ -1,5 +1,5 @@
 import CheckoutSteps from "../Layout/CheckoutSteps";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCartStore } from "../../Zustand/CartStore";
 import { useUserStore } from "../../Zustand/UserStore";
 import { useNavigate } from "react-router-dom";
@@ -15,9 +15,11 @@ const Payment = () => {
   const totalPrice = useCartStore((state) => state.totalPrice);
   const discount = useCartStore((state) => state.discount);
   const finalPrice = useCartStore((state) => state.finalPrice);
+  const setDiscount = useCartStore((state) => state.setDiscount)
+ 
 
   const handleCheckout = async () => {
-    if (!currentUser) {
+    if (!currentUser || !currentUser.authToken) {
       alert("Usuário não autenticado");
       return;
     }
@@ -40,9 +42,12 @@ const Payment = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${currentUser.authToken}`
         },
         body: JSON.stringify(orderData),
       });
+
+      console.log('usuario atual', currentUser)
 
       if (!response.ok) {
         console.error("Erro ao criar o pedido");
@@ -64,6 +69,16 @@ const Payment = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if(paymentMethod === 'pix'){
+      const desconto = totalPrice * 0.05
+      setDiscount(desconto)
+     } else {
+      setDiscount(0)
+     }
+  }, [discount, paymentMethod])
+
 
   return (
     <div>
