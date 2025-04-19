@@ -49,7 +49,8 @@ function Login() {
         }
 
         console.log("Antes do login Zustand:", useAuthStore.getState().isAuthenticated);
-        
+
+        useAuthStore.getState().login(response.data.data.user)
         useUserStore.getState().login(response.data.data.user, response.data.data.token, "Login realizado com sucesso!");
         
         localStorage.setItem('authToken', response.data.data.token); // 🔹 Salva o token
@@ -65,8 +66,22 @@ function Login() {
             navigate('/'); 
         }, 1500);
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Erro ao tentar logar:", error);
+
+        const errorMessage = error.response?.data?.message || "Erro ao buscar as credenciais"
+
+        setAlert({
+            message: errorMessage,
+            type: "error"
+        })
+
+        if(error.response?.status === 401){
+            setAlert({message: "email ou senha invalido", type: "error"})
+        }
+
+        setTimeout(() => setAlert(null), 3000);
+
     }
 };
 

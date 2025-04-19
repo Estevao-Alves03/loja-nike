@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useUserStore } from "../../Zustand/UserStore";
+import { useOrderStore } from "../../Zustand/OrderStore";
 import api from "../../services/Api";
 
 interface Product {
@@ -24,76 +25,87 @@ interface Order {
 const Orders = () => {
   const { currentUser } = useUserStore();
   const authToken = currentUser?.authToken || "";
-  const [orders, setOrders] = useState<Order[]>([]);
+  const ordersMap = useOrderStore((state) => state.orders);
+  const orders = Object.values(ordersMap);
+  const setOrder = useOrderStore((state) => state.setOrder);
   const [activeTab, setActiveTab] = useState("all");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const fetchOrders = useCallback(async () => {
-  setLoading(true);
-  setError(null);
-
-  try {
-    const { data: ordersData } = await api.get(`/orders`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`, // Enviamos o token no cabeçalho
-      },
-    });
-
-    console.log("Pedidos encontrados:", ordersData);
-
-    const ordersWithProducts = await Promise.all(
-      ordersData.map(async (order: Order) => {
-        try {
-          const { data: productsData } = await api.get(`/order_items?order_id=${order.id}`, {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          });
-
-          console.log(`Produtos do pedido ${order.id}:`, productsData);
-
-          const detailedProducts = await Promise.all(
-            productsData.map(async (item: { product_id: number; quantity: number }) => {
-              try {
-                const { data: productDetails } = await api.get(`/products?cod_product=${item.product_id}`, {
-                  headers: {
-                    Authorization: `Bearer ${authToken}`,
-                  },
-                });
-
-                const matchedProduct = productDetails.find((p: Product) => p.cod_product === item.product_id);
-
-                if (!matchedProduct) {
-                  console.warn(`Produto com ID ${item.product_id} não encontrado.`);
+    setLoading(true);
+    setError(null);
+  
+    try {
+      const { data: ordersData } = await api.get('/orders', {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+  
+      console.log("Pedidos encontrados:", ordersData);
+  
+      const ordersWithProducts: Order[] = await Promise.all(
+        ordersData.map(async (order: any) => {
+          try {
+            console.log(`→ Carregando produtos para o pedido #${order.id}`);
+            
+            const { data: productsData } = await api.get(`/order_items?order_id=${order.id}`, {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            });
+  
+            // Filtra manualmente para garantir que só pega itens do pedido atual
+            const filteredItems = productsData.filter((item: any) => item.order_id === order.id);
+  
+            const detailedProducts = await Promise.all(
+              filteredItems.map(async (item: { product_id: number; quantity: number }) => {
+                try {
+                  const { data: productDetails } = await api.get(`/products?cod_product=${item.product_id}`, {
+                    headers: {
+                      Authorization: `Bearer ${authToken}`,
+                    },
+                  });
+  
+                  const matchedProduct = productDetails.find(
+                    (p: Product) => p.cod_product === item.product_id
+                  );
+  
+                  if (!matchedProduct) {
+                    console.warn(`Produto com ID ${item.product_id} não encontrado.`);
+                    return null;
+                  }
+  
+                  return { ...matchedProduct, quantity: item.quantity };
+                } catch (error) {
+                  console.error(`Erro ao buscar detalhes do produto ${item.product_id}:`, error);
                   return null;
                 }
-
-                return { ...matchedProduct, quantity: item.quantity };
-              } catch (error) {
-                console.error(`Erro ao buscar detalhes do produto ${item.product_id}:`, error);
-                return null;
-              }
-            })
-          );
-
-          return { ...order, products: detailedProducts.filter(Boolean) };
-        } catch (error) {
-          console.error(`Erro ao buscar produtos do pedido ${order.id}:`, error);
-          return { ...order, products: [] };
-        }
-      })
-    );
-
-    console.log("Pedidos finalizados corretamente:", ordersWithProducts);
-    setOrders(ordersWithProducts);
-  } catch (error) {
-    setError("Não foi possível carregar os pedidos. Tente novamente mais tarde.");
-    console.error("Erro ao buscar pedidos:", error);
-  } finally {
-    setLoading(false);
-  }
-}, [authToken]);
-
+              })
+            );
+  
+            return { ...order, products: detailedProducts.filter(Boolean) } as Order;
+          } catch (error) {
+            console.error(`Erro ao buscar produtos do pedido ${order.id}:`, error);
+            return { ...order, products: [] } as Order;
+          }
+        })
+      );
+  
+      console.log("Pedidos finalizados corretamente:", ordersWithProducts);
+  
+      // Agora sobrescreve corretamente, sem mesclar
+      setOrder(ordersWithProducts);
+  
+    } catch (error) {
+      setError("Não foi possível carregar os pedidos. Tente novamente mais tarde.");
+      console.error("Erro ao buscar pedidos:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [authToken, setOrder]);
+  
 
   useEffect(() => {
     fetchOrders();

@@ -9,7 +9,8 @@ import Cart from "../MyCart/Cart";
 
 function Navbar() {   
     const cart = useCartStore((state) => state.cart);
-    const { isAuthenticated, logout } = useAuthStore(); 
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+    const logout = useAuthStore((state) => state.logout)
 
     const productsCount = useMemo(() => {
         return cart.reduce((acc, curr) => acc + curr.quantity, 0);
